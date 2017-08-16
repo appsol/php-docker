@@ -2,42 +2,33 @@ version: '2'
 services:
   web:
     build: .
-    # container_name: wp-cli-docker_web
-    # domainname: wp-cli-docker.dev
-    # hostname: wp-cli-docker
+    image: laravel-docker:apache-7.1
     ports:
       - 80:80
-    # volumes:
-    #   - ./public_html:/var/www/html
+    tty: true
     links:
       - db:mysql
     depends_on:
       - db
     environment:
-      - DEV_NAME=wpdocker
-      - DEV_DOMAIN=wpdocker.dev
+      - DEV_NAME=laraveldocker
+      - DEV_DOMAIN=laraveldocker.dev
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=wpdocker
-      - MYSQL_USER=wpdocker_user
-      - MYSQL_PASSWORD=wpdocker_pass
-      - WORDPRESS_TABLE_PREFIX=abc12_
-      - WORDPRESS_SITE_TITLE=WP-Docker Test Site
-      - WORDPRESS_ADMIN_USER=admin
-      - WORDPRESS_ADMIN_PASS=letmein123
-      - WORDPRESS_ADMIN_EMAIL=stuart@appropriatesolutions.co.uk
-    # restart: on-failure
+      - MYSQL_DATABASE=laraveldocker
+      - DB_DATABASE=laraveldocker
+      - MYSQL_USER=laraveldocker_user
+      - DB_USERNAME=laraveldocker_user
+      - MYSQL_PASSWORD=laraveldocker_pass
+      - DB_PASSWORD=laraveldocker_pass
+      - PATH=$PATH:/root/.composer/vendor/bin/
+      - LARAVEL=blog
+
   db:
     image: mariadb:latest
-    # container_name: wp-cli-docker_db
     ports:
       - 3306
-    # volumes:
-    #   - ./data/db:/var/lib/mysql
-    #   - ./data/import:/docker-entrypoint-initdb.d/
-    #   - ./data/conf/:/etc/mysql/conf.d
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=wpdocker
-      - MYSQL_USER=wpdocker_user
-      - MYSQL_PASSWORD=wpdocker_pass
-    # restart: on-failure
+      - MYSQL_DATABASE=laraveldocker
+      - MYSQL_USER=laraveldocker_user
+      - MYSQL_PASSWORD=laraveldocker_pass
