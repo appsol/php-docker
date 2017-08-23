@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     git \
     zip \
     unzip \
-    php7.0-zip \
+    php-pclzip \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr --with-freetype-dir=/usr \
     && docker-php-ext-install -j$(nproc) gd mysqli opcache iconv mcrypt zip
