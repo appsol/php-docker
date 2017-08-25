@@ -12,9 +12,10 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     php-pclzip \
+    php5-mysql \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr --with-freetype-dir=/usr \
-    && docker-php-ext-install -j$(nproc) gd mysqli opcache iconv mcrypt zip
+    && docker-php-ext-install -j$(nproc) gd mysqli pdo_mysql opcache iconv mcrypt zip
 
 # install Xdebug
 RUN pecl install xdebug \

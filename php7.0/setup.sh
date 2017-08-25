@@ -20,23 +20,24 @@ if [[ ! -z "$LARAVEL" ]]; then
     composer global require "laravel/installer"
     echo >&2 "Laravel: creating new $LARAVEL"
     laravel new $LARAVEL
-    echo >&2 "Set DocumentRoot for new Laravel install"
-    sed -i "s/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html\/$LARAVEL\/public/" /etc/apache2/sites-available/000-default.conf
-    sed -i "s/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html\/$LARAVEL\/public/" /etc/apache2/sites-available/default-ssl.conf
+    sed -i "s|DocumentRoot /var/www/html|DocumentRoot /var/www/html/$LARAVEL/public|" /etc/apache2/sites-available/000-default.conf
+    sed -i "s|DocumentRoot /var/www/html|DocumentRoot /var/www/html/$LARAVEL/public|" /etc/apache2/sites-available/default-ssl.conf
 elif [[ ! -z "$DOCUMENTROOT" ]]; then
     echo >&2 "Set DocumentRoot as /var/www/html/$DOCUMENTROOT"
-    sed -i "s/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html\/$DOCUMENTROOT/" /etc/apache2/sites-available/000-default.conf
-    sed -i "s/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html\/$DOCUMENTROOT/" /etc/apache2/sites-available/default-ssl.conf
+    sed -i "s|DocumentRoot /var/www/html|DocumentRoot /var/www/html/$DOCUMENTROOT|" /etc/apache2/sites-available/000-default.conf
+    sed -i "s|DocumentRoot /var/www/html|DocumentRoot /var/www/html/$DOCUMENTROOT|" /etc/apache2/sites-available/default-ssl.conf
+    if [[ -e "/var/www/html/$DOCUMENTROOT" ]]; then
+        echo '<?php phpinfo(); ?>' > /var/www/html/$DOCUMENTROOT/test.php
+    fi
 else
     echo >&2 "DocumentRoot unchanged"
+    echo '<?php phpinfo(); ?>' > /var/www/html/test.php
 fi
 
 if [[ -f "composer.json" ]]; then
     echo >&2 "Composer: installing dependencies"
     composer install
 fi
-
-echo '<?php phpinfo(); ?>' > /var/www/html/test.php
 
 echo >&2 "Change permissions on Website files"
 

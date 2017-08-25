@@ -21,7 +21,8 @@ services:
       - MYSQL_PASSWORD=laraveldocker_pass
       - DB_PASSWORD=laraveldocker_pass
       - PATH=$PATH:/root/.composer/vendor/bin/
-      - DOCUMENTROOT=blog\/public
+      - LARAVEL=blog
+      - DOCUMENTROOT=blog/public
 
   db:
     image: mariadb:latest
