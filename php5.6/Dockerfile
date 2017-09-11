@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     libpng12-dev \
     libjpeg62-turbo-dev \
     libmcrypt-dev \
+    wget \
     git \
     zip \
     unzip \
