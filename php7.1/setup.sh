@@ -24,6 +24,8 @@ RESULT=$?
 rm composer-setup.php
 mv composer.phar /usr/local/bin/composer
 composer
+# Add composer/vendor/bin to PATH
+PATH=$PATH:/root/.composer/vendor/bin/
 
 if [[ ! -z "$LARAVEL" ]]; then
     echo >&2 "Composer: install Laravel"
