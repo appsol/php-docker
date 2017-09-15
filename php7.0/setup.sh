@@ -30,7 +30,6 @@ PATH=$PATH:/root/.composer/vendor/bin/
 if [[ ! -z "$LARAVEL" ]]; then
     if [[ "$(ls -A /var/www/html/)" ]]; then
         echo >&2 "Not installing Laravel: Directory not empty"
-        exit 1
     else
         echo >&2 "Composer: install Laravel"
         composer global require "laravel/installer"
