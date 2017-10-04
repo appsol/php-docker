@@ -58,7 +58,7 @@ fi
 echo >&2 "Change permissions on Website files"
 
 chown -R www-data:www-data /var/www/html
-find /var/www/html -type f -exec chmod 666 {} \;
-find /var/www/html -type d -exec chmod 777 {} \;
+find /var/www/html -type f -exec chmod 664 {} \;
+find /var/www/html -type d -exec chmod 775 {} \;
 
 exec "$@"
