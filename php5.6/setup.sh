@@ -50,6 +50,19 @@ else
     echo '<?php phpinfo(); ?>' > /var/www/html/test.php
 fi
 
+if [[ -d "/etc/letsencrypt/live" ]]; then
+echo >&2 "Adding LetsEncrypt Certficate references to sites-available/default-ssl.conf"
+sed -i "s|SSLCertificateFile|#SSLCertificateFile|" /etc/apache2/sites-available/default-ssl.conf
+sed -i "s|SSLCertificateKeyFile|#SSLCertificateKeyFile|" /etc/apache2/sites-available/default-ssl.conf
+sed -i '/Server Certificate Chain:$/i \
+                \
+                #   LetsEncrypt Certificates\
+                SSLCertificateKeyFile /etc/letsencrypt/live/'"${VIRTUAL_HOST}"'/privkey.pem\
+                SSLCertificateFile /etc/letsencrypt/live/'"${VIRTUAL_HOST}"'/fullchain.pem\
+               \
+               ' /etc/apache2/sites-available/default-ssl.conf
+fi
+
 if [[ -f "composer.json" ]]; then
     echo >&2 "Composer: installing dependencies"
     composer install
@@ -60,5 +73,10 @@ echo >&2 "Change permissions on Website files"
 chown -R www-data:www-data /var/www/html
 find /var/www/html -type f -exec chmod 664 {} \;
 find /var/www/html -type d -exec chmod 775 {} \;
+
+if [[ -d "/var/www/html/$LARAVEL/vendor/bin" ]]; then
+    echo >&2 "Making vendor binaries executable"
+    chmod +x /var/www/html/$LARAVEL/vendor/bin/*
+fi
 
 exec "$@"

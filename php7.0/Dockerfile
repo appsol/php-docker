@@ -1,6 +1,8 @@
 FROM php:7.0-apache
 
-RUN a2enmod rewrite expires
+RUN a2enmod rewrite expires ssl
+
+RUN a2ensite default-ssl
 
 # install the PHP extensions we need
 RUN apt-get update && apt-get install -y \

@@ -11,8 +11,7 @@ services:
     depends_on:
       - db
     environment:
-      - DEV_NAME=laraveldocker
-      - DEV_DOMAIN=laraveldocker.dev
+      - VIRTUAL_HOST=laraveldocker.dev
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=laraveldocker
       - DB_DATABASE=laraveldocker

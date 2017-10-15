@@ -6,13 +6,14 @@ services:
     ports:
       - 80:80
     tty: true
+    volumes:
+      - .:/etc/letsencrypt/live/:ro
     links:
       - db:mysql
     depends_on:
       - db
     environment:
-      - DEV_NAME=laraveldocker
-      - DEV_DOMAIN=laraveldocker.dev
+      - VIRTUAL_HOST=laraveldocker.dev
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=laraveldocker
       - DB_DATABASE=laraveldocker
