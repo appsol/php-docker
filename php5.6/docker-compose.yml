@@ -6,8 +6,6 @@ services:
     ports:
       - 80:80
     tty: true
-    volumes:
-      - .:/etc/letsencrypt/live/:ro
     links:
       - db:mysql
     depends_on:

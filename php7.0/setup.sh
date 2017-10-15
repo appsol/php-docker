@@ -50,19 +50,6 @@ else
     echo '<?php phpinfo(); ?>' > /var/www/html/test.php
 fi
 
-if [[ -d "/etc/letsencrypt/live" ]]; then
-echo >&2 "Adding LetsEncrypt Certficate references to sites-available/default-ssl.conf"
-sed -i "s|SSLCertificateFile|#SSLCertificateFile|" /etc/apache2/sites-available/default-ssl.conf
-sed -i "s|SSLCertificateKeyFile|#SSLCertificateKeyFile|" /etc/apache2/sites-available/default-ssl.conf
-sed -i '/Server Certificate Chain:$/i \
-                \
-                #   LetsEncrypt Certificates\
-                SSLCertificateKeyFile /etc/letsencrypt/live/'"${VIRTUAL_HOST}"'/privkey.pem\
-                SSLCertificateFile /etc/letsencrypt/live/'"${VIRTUAL_HOST}"'/fullchain.pem\
-               \
-               ' /etc/apache2/sites-available/default-ssl.conf
-fi
-
 if [[ -f "composer.json" ]]; then
     echo >&2 "Composer: installing dependencies"
     composer install

@@ -1,9 +1,8 @@
 FROM php:7.1-apache
 
-RUN a2enmod rewrite expires ssl
-
 # install the PHP extensions we need
 RUN apt-get update && apt-get install -y \
+    ssl-cert \
     libfreetype6-dev \
     libpng12-dev \
     libjpeg62-turbo-dev \
@@ -17,6 +16,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr --with-freetype-dir=/usr \
     && docker-php-ext-install -j$(nproc) gd mysqli pdo_mysql opcache iconv mcrypt zip
+
+RUN a2enmod rewrite expires ssl
+
+RUN a2ensite default-ssl
 
 # install Xdebug
 RUN pecl install xdebug \
