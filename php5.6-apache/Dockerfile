@@ -52,7 +52,7 @@ ADD conf/opcache-recommended.ini /usr/local/etc/php/conf.d/opcache.ini
 # Configure PHP
 ADD conf/local.ini /usr/local/etc/php/conf.d/local.ini
 
-# Add user for laravel application
+# Add user for php application
 RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www
 
@@ -63,5 +63,7 @@ USER www
 RUN if [ -f "composer.json" ]; then \
         composer install; \
     fi;
+
+USER root
 
 CMD ["apache2-foreground"]

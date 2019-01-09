@@ -74,4 +74,6 @@ RUN if [ -f "composer.json" ]; then \
         composer install; \
     fi;
 
+USER root
+
 CMD ["apache2-foreground"]
