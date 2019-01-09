@@ -16,6 +16,8 @@ services:
       - db:mysql
     depends_on:
       - db
+    environment:
+      - DOCUMENTROOT=public
   db:
     image: mariadb:latest
     container_name: php-docker_db
