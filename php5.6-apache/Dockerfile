@@ -5,6 +5,8 @@ LABEL maintainer="Stuart Laverick"
 # Set working directory
 WORKDIR /var/www/html
 
+ENV DOCUMENTROOT="$DOCUMENTROOT"
+
 # Set the time zone
 RUN apt-get update \
     && apt-get install -y gnupg tzdata \
@@ -41,28 +43,19 @@ RUN apt-get update \
 # Enable Apache mods and SSL site
 RUN a2enmod rewrite expires ssl
 
-# Change the document root if required
-RUN if [ ! -z "$DOCUMENTROOT" ]; then \
-        sed -i "s|DocumentRoot /var/www/html$|DocumentRoot /var/www/html/$DOCUMENTROOT|" /etc/apache2/sites-available/000-default.conf; \
-    fi;
-
 # Configure Opcache
 ADD conf/opcache-recommended.ini /usr/local/etc/php/conf.d/opcache.ini
 
 # Configure PHP
 ADD conf/local.ini /usr/local/etc/php/conf.d/local.ini
 
+# Configure Apache default site
+ADD conf/default.conf /etc/apache2/sites-available/000-default.conf
+
 # Add user for php application
 RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www
-
-# Change current user to www
-USER www
-
-# Install Composer dependancies
-RUN if [ -f "composer.json" ]; then \
-        composer install; \
-    fi;
+RUN chown -R www:www-data /var/www/html;
 
 USER root
 
