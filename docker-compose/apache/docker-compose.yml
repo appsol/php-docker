@@ -11,6 +11,7 @@ services:
     tty: true
     volumes:
       - ./public_html:/var/www/html
+      - ./conf/default.conf:/etc/apache2/sites-available/000-default.conf
     working_dir: /var/www/html
     links:
       - db:mysql

@@ -1,4 +1,4 @@
-FROM php:7.1-apache
+FROM php:7.1-fpm
 
 LABEL maintainer="Stuart Laverick"
 
@@ -11,7 +11,7 @@ RUN apt-get update \
     && echo "UTC" > /etc/timezone \
     && dpkg-reconfigure -f noninteractive tzdata
 
-# install the PHP extensions we need
+# install the Packages and PHP extensions we need
 RUN apt-get update \
     && apt-get install -y \
     apt-utils \
@@ -42,30 +42,29 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Enable Apache mods and SSL site
-RUN a2enmod rewrite expires ssl
-
 # install and Configure Xdebug
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug \
-    && echo "zend_extension=\"$(pecl config-get ext_dir)/xdebug.so\"" > "$PHP_INI_DIR/conf.d/xdebug.ini"
+    && echo "zend_extension=\"$(pecl config-get ext_dir)/xdebug.so\"" > /usr/local/etc/php/conf.d/xdebug.ini
 
 # Install and configure PHP Redis
 RUN pecl install redis \
     && docker-php-ext-enable redis
 
 # Configure Opcache
-ADD conf/opcache-recommended.ini "$PHP_INI_DIR/conf.d/opcache.ini"
+ADD conf/opcache-recommended.ini /usr/local/etc/php/conf.d/opcache.ini
 
 # Configure PHP
-#RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-ADD conf/local.ini "$PHP_INI_DIR/conf.d/local.ini"
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+ADD conf/local.ini /usr/local/etc/php/conf.d/local.ini
 
 # Add user for laravel application
 RUN groupadd -g 1000 www
-RUN useradd -u 1000 -ms /bin/bash -g www www \
-    && chown -R www:www-data . \
-    && find . -type f -exec chmod 664 {} + \
-    && find . -type d -exec chmod 750 {} +;
+RUN useradd -u 1000 -ms /bin/bash -g www www
 
-CMD ["apache2-foreground"]
+# Change current user to www
+USER www
+
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]

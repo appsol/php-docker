@@ -20,8 +20,12 @@ RUN apt-get update \
     git \
     jpegoptim optipng pngquant gifsicle \
     libfreetype6-dev \
+    libicu-dev \
     libjpeg62-turbo-dev \
+    libmcrypt-dev \
     libpng-dev \
+    libxml2-dev \
+    libxslt1-dev \
     locales \
     mysql-client \
     nano \
@@ -30,7 +34,8 @@ RUN apt-get update \
     unzip \
     zip \
     && docker-php-ext-configure gd --with-gd --with-png-dir=/usr/include --with-jpeg-dir=/usr/include --with-freetype-dir=/usr/include \
-    && docker-php-ext-install -j$(nproc) gd mbstring pdo_mysql opcache zip \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install -j$(nproc) bcmath intl gd mcrypt mysqli opcache pdo_mysql soap xsl zip \
     && php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer \
     && mkdir /run/php \
     && apt-get -y autoremove \
@@ -39,11 +44,6 @@ RUN apt-get update \
 
 # Enable Apache mods and SSL site
 RUN a2enmod rewrite expires ssl
-
-# Change the document root if required
-RUN if [ ! -z "$DOCUMENTROOT" ]; then \
-        sed -i "s|DocumentRoot /var/www/html$|DocumentRoot /var/www/html/$DOCUMENTROOT|" /etc/apache2/sites-available/000-default.conf; \
-    fi;
 
 # install and Configure Xdebug
 RUN pecl install xdebug \
@@ -58,20 +58,14 @@ RUN pecl install redis \
 ADD conf/opcache-recommended.ini "$PHP_INI_DIR/conf.d/opcache.ini"
 
 # Configure PHP
+#RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 ADD conf/local.ini "$PHP_INI_DIR/conf.d/local.ini"
 
 # Add user for laravel application
 RUN groupadd -g 1000 www
-RUN useradd -u 1000 -ms /bin/bash -g www www
-
-# Change current user to www
-USER www
-
-# Install Composer dependancies
-RUN if [ -f "composer.json" ]; then \
-        composer install; \
-    fi;
-
-USER root
+RUN useradd -u 1000 -ms /bin/bash -g www www \
+    && chown -R www:www-data . \
+    && find . -type f -exec chmod 664 {} + \
+    && find . -type d -exec chmod 750 {} +;
 
 CMD ["apache2-foreground"]

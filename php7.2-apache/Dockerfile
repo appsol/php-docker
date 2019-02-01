@@ -23,6 +23,8 @@ RUN apt-get update \
     libicu-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
+    libxml2-dev \
+    libxslt1-dev \
     locales \
     mysql-client \
     nano \
@@ -32,7 +34,7 @@ RUN apt-get update \
     zip \
     && docker-php-ext-configure gd --with-gd --with-png-dir=/usr/include --with-jpeg-dir=/usr/include --with-freetype-dir=/usr/include \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install -j$(nproc) bcmath intl gd opcache pdo zip \
+    && docker-php-ext-install -j$(nproc) bcmath intl gd mysqli opcache pdo_mysql soap xsl zip \
     && php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer \
     && mkdir /run/php \
     && apt-get -y autoremove \
@@ -55,8 +57,7 @@ RUN pecl install redis \
 ADD conf/opcache-recommended.ini "$PHP_INI_DIR/conf.d/opcache.ini"
 
 # Configure PHP
-RUN ls -a "$PHP_INI_DIR"
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+#RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 ADD conf/local.ini "$PHP_INI_DIR/conf.d/local.ini"
 
 # Add user for laravel application
@@ -65,7 +66,5 @@ RUN useradd -u 1000 -ms /bin/bash -g www www \
     && chown -R www:www-data . \
     && find . -type f -exec chmod 664 {} + \
     && find . -type d -exec chmod 750 {} +;
-
-USER root
 
 CMD ["apache2-foreground"]
