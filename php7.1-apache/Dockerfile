@@ -27,7 +27,7 @@ RUN apt-get update \
     libxml2-dev \
     libxslt1-dev \
     locales \
-    mysql-client \
+    mariadb-client \
     nano \
     ssl-cert \
     supervisor \
@@ -46,12 +46,11 @@ RUN apt-get update \
 RUN a2enmod rewrite expires ssl
 
 # install and Configure Xdebug
-RUN pecl install xdebug \
-    && docker-php-ext-enable xdebug \
-    && echo "zend_extension=\"$(pecl config-get ext_dir)/xdebug.so\"" > "$PHP_INI_DIR/conf.d/xdebug.ini"
+RUN pecl install xdebug-2.7.2 \
+    && docker-php-ext-enable xdebug
 
 # Install and configure PHP Redis
-RUN pecl install redis \
+RUN pecl install redis-5.0.1 \
     && docker-php-ext-enable redis
 
 # Configure Opcache
