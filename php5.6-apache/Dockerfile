@@ -23,13 +23,12 @@ RUN apt-get update \
     libicu-dev \
     libjpeg62-turbo-dev \
     libmcrypt-dev \
-    libpng12-dev \
+    libpng-dev \
     libxml2-dev \
     libxslt1-dev \
     locales \
     nano \
-    php-pclzip \
-    php5-mysql \
+    mariadb-client \
     ssl-cert \
     supervisor \
     unzip \
@@ -46,15 +45,16 @@ RUN apt-get update \
 # Enable Apache mods and SSL site
 RUN a2enmod rewrite expires ssl
 
-# Install and configure PHP Redis
-RUN pecl install redis \
-    && docker-php-ext-enable redis
-
 # Configure Opcache
 ADD conf/opcache-recommended.ini /usr/local/etc/php/conf.d/opcache.ini
 
 # Configure PHP
 ADD conf/local.ini /usr/local/etc/php/conf.d/local.ini
+
+ENV DOCUMENTROOT /var/www/html
+
+RUN sed -ri -e 's!/var/www/html!${DOCUMENTROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${DOCUMENTROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # Add user for php application
 RUN groupadd -g 1000 www
