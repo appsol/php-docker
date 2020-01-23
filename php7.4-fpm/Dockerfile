@@ -29,7 +29,7 @@ RUN apt-get update \
     libxslt1-dev \
     locales \
     mariadb-client \
-    postgresql \
+    postgresql-client \
     nano \
     ssl-cert \
     supervisor \
